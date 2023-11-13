@@ -8,12 +8,12 @@
 #########################################################################
 # Authors : Philippe Benabes & Koen de Turck
 # Modifications by Morgan Roger & Erwan Libessart
-# TBD : message content could explicitly include origin 
+# TBD : message content could explicitly include origin
 #########################################################################
 
 import zmq
 
-server_ip = "192.168.137.1"
+server_ip = "192.168.198.204"
 verbose_mode = False
 key_to_exit_program = b'q'
 
@@ -22,7 +22,6 @@ def main():
     server_socket = connect_to(server_ip)
     register_msg = {"cmd": "log"}       # add header indicating origin ?
     send_message(server_socket, register_msg)
-    
 
     print("Welcome to control.py")
     print("Press enter to validate your command and send it to the server")
@@ -32,7 +31,8 @@ def main():
         if input_str != '':
             cmd_char = input_str[0]
             if cmd_char != 'q':
-                msg = {"cmd": "key", "key": cmd_char}       # add header indicating origin ?
+                # add header indicating origin ?
+                msg = {"cmd": "key", "key": cmd_char}
                 send_message(server_socket, msg)
 
 
@@ -41,8 +41,9 @@ def connect_to(ip):
     sock = ctx.socket(zmq.REQ)
     address = "tcp://{}:5005".format(ip)
     sock.connect(address)
-    
+
     return sock
+
 
 def send_message(sock, content):
     msg = {"from": "control"}       # header indicating origin
@@ -51,7 +52,7 @@ def send_message(sock, content):
     reply = sock.recv_pyobj()
     if verbose_mode:
         print(reply)
-    
+
     return reply
 
 
